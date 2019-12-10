@@ -1,50 +1,16 @@
 package main
 
+import "regexp"
+
 type TreeNode struct {
   Val int
   Left *TreeNode
   Right *TreeNode
 }
 
-func getSubTree(currTreeNode *TreeNode, search int) *TreeNode {
-  if currTreeNode == nil {
-    return nil
-  }
-
-  if currTreeNode.Val == search {
-    return currTreeNode
-  }
-
-  if search < currTreeNode.Val {
-    return getSubTree(currTreeNode.Left, search)
-  }
-
-  if search > currTreeNode.Val {
-    return getSubTree(currTreeNode.Right, search)
-  }
-}
-
-func isEquals(root1 *TreeNode, root2 *TreeNode) bool {
-  if root1 == nil && root2 == nil {
-    return true
-  }
-
-  if root1 == nil {
-    return false
-  }
-
-  if root2 == nil {
-    return false
-  }
-
-  return root1.Val == root2.Val && isEquals(root1.Left, root2.Left) && isEquals(root1.Right, root2.Right)
-
-}
-
-func isSubTree(s *TreeNode, t *TreeNode) bool {
-
+func isEqual(s *TreeNode, t *TreeNode) bool {
   if s == nil && t == nil {
-    return false
+    return true
   }
 
   if s == nil {
@@ -55,14 +21,31 @@ func isSubTree(s *TreeNode, t *TreeNode) bool {
     return false
   }
 
-  subTree := getSubTree(s, t.Val)
-
-  if subTree == nil {
+  if s.Val != t.Val {
     return false
   }
 
-  return isEquals(subTree, t)
+  return isEqual(s.Left, t.Left) && isEqual(s.Right, t.Right)
+}
 
+func isSubtree(s *TreeNode, t *TreeNode) bool {
+  if isEqual(s, t) {
+    return true
+  }
+
+  if s != nil && s.Left != nil && s.Right != nil {
+    return isSubtree(s.Left, t) || isSubtree(s.Right, t)
+  }
+
+  if s != nil && s.Left == nil {
+    return isSubtree(s.Right, t)
+  }
+
+  if s != nil && s.Right == nil {
+    return isSubtree(s.Left, t)
+  }
+
+  return false
 }
 
 func main() {
